@@ -45,8 +45,50 @@ class SystemInfo:
 		for val in values:
 			result_set.append(float(val))
 		return result_set
-        
-		
+       
+
+	def get_latest_file(self,folder_name,filter_name):
+		if(os.path.isdir(folder_name)):
+                        files=os.walk(folder_name).next()[2]
+                else:
+                        print "No folder exists "+folder_name
+                        return []
+		filtered_files= [x for x in files if x.find(filter_name) != -1]
+		abs_path=[folder_name+x for x in filtered_files]
+		latest_file = max(abs_path, key=os.path.getmtime)
+		return latest_file
+		 
+	def get_osd_latency(self,osd_id):
+		folder_name=self.base_folder+"/ceph-ceph-"+str(osd_id)+"/"		
+		latest_file_avgcount= self.get_latest_file(folder_name,'op_latency-avgcount')
+		latest_file_sum= self.get_latest_file(folder_name,'op_latency-sum')
+		latest_file_r_avgcount= self.get_latest_file(folder_name,'op_r_latency-avgcount')
+		latest_file_r_sum= self.get_latest_file(folder_name,'op_r_latency-sum')
+		latest_file_w_avgcount= self.get_latest_file(folder_name,'op_w_latency-avgcount')
+		latest_file_w_sum= self.get_latest_file(folder_name,'op_w_latency-sum')
+		result_set=[]
+		value_avgcount=float((self.read(latest_file_avgcount))[1])
+		value_sum=float((self.read(latest_file_sum))[1])
+		print "Overall count value",value_avgcount
+		print "Overall sum value",value_sum
+		latency = value_sum/value_avgcount
+		result_set.append(latency)
+		print "latency ",latency
+		value_avgcount=float((self.read(latest_file_r_avgcount))[1])
+		value_sum=float((self.read(latest_file_r_sum))[1])
+		print "Read count value",value_avgcount
+		print "Read sum value",value_sum
+		latency = value_sum/value_avgcount
+		result_set.append(latency)
+		print "Read latency ",latency
+		value_avgcount=float((self.read(latest_file_w_avgcount))[1])
+		value_sum=float((self.read(latest_file_w_sum))[1])
+		print "Write count value",value_avgcount
+		print "Write sum value",value_sum
+		latency = value_sum/value_avgcount
+		result_set.append(latency)
+		print "Write latency ",latency
+                return result_set
 
 if __name__ == "__main__":
 	info=SystemInfo("bd-1-3.ubuntu")

@@ -39,10 +39,13 @@ class CephQuery():
 	def get_osd_list(self):
 		osd_data=self.get_osd_info()
 		#print osd_data
+		osd_id=[]
 		osd_list=[]
 		for val in osd_data:
 			osd_list.append(val["public_addr"].split(":")[0])
-		return osd_list
+			osd_id.append(val["osd"])
+		print "id",osd_id
+		return (osd_list,osd_id)
 
        
 if __name__ == "__main__":
