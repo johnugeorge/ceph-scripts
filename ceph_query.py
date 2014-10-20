@@ -44,10 +44,25 @@ class CephQuery():
 		for val in osd_data:
 			osd_list.append(val["public_addr"].split(":")[0])
 			osd_id.append(val["osd"])
-		print "id",osd_id
+		#print "id",osd_id
 		return (osd_list,osd_id)
 
-       
+	def get_pg_info(self):
+		cmd="ceph pg dump -f json"
+                results = self.command.fetch_results(cmd)
+                json_output = json.loads(results)
+                return json_output["osd_stats"]
+	
+	def get_osd_usage(self,osd):
+		res=self.get_pg_info()
+		result_set=[]
+		for item in res:
+			if item['osd'] == osd:
+				result_set.append(float(item['kb_used']))
+				result_set.append(float(item['kb']))
+		return result_set
+				
+ 
 if __name__ == "__main__":
 	ceph=CephQuery()
 	print ceph.get_cluster_status()

@@ -37,10 +37,9 @@ class SystemInfo:
 		abs_path=[folder_name+x for x in files] 
 		latest_file = max(abs_path, key=os.path.getmtime)
 		values=self.read(latest_file)
-		print "Epoch ",values[0]
-		print "Avg in last 1 min ",values[1]
-		print "Avg in last 5 min ",values[2]
-		print "Avg in last 10 min ",values[3]
+		#print "Avg in last 1 min ",values[1]
+		#print "Avg in last 5 min ",values[2]
+		#print "Avg in last 10 min ",values[3]
 		result_set=[]
 		for val in values:
 			result_set.append(float(val))
@@ -69,25 +68,34 @@ class SystemInfo:
 		result_set=[]
 		value_avgcount=float((self.read(latest_file_avgcount))[1])
 		value_sum=float((self.read(latest_file_sum))[1])
-		print "Overall count value",value_avgcount
-		print "Overall sum value",value_sum
-		latency = value_sum/value_avgcount
+		#print "Overall count value",value_avgcount
+		#print "Overall sum value",value_sum
+		if value_avgcount == 0:
+			latency = 0
+		else:
+			latency = value_sum/value_avgcount
 		result_set.append(latency)
-		print "latency ",latency
+		#print "Overall latency ",latency
 		value_avgcount=float((self.read(latest_file_r_avgcount))[1])
 		value_sum=float((self.read(latest_file_r_sum))[1])
-		print "Read count value",value_avgcount
-		print "Read sum value",value_sum
-		latency = value_sum/value_avgcount
+		#print "Read count value",value_avgcount
+		#print "Read sum value",value_sum
+		if value_avgcount == 0:
+			latency = 0
+		else:
+			latency = value_sum/value_avgcount
 		result_set.append(latency)
-		print "Read latency ",latency
+		#print "Read latency ",latency
 		value_avgcount=float((self.read(latest_file_w_avgcount))[1])
 		value_sum=float((self.read(latest_file_w_sum))[1])
-		print "Write count value",value_avgcount
-		print "Write sum value",value_sum
-		latency = value_sum/value_avgcount
+		#print "Write count value",value_avgcount
+		#print "Write sum value",value_sum
+		if value_avgcount == 0:
+			latency = 0
+		else:
+			latency = value_sum/value_avgcount
 		result_set.append(latency)
-		print "Write latency ",latency
+		#print "Write latency ",latency
                 return result_set
 
 if __name__ == "__main__":
