@@ -61,6 +61,13 @@ class CephQuery():
 				result_set.append(float(item['kb_used']))
 				result_set.append(float(item['kb']))
 		return result_set
+
+	def set_primary_affinity_cost(self,osd,val):
+		cmd="ceph osd primary-affinity-cost osd."+str(osd)+" "+str(val)
+		self.command.fetch_results(cmd)
+		print " Command Executed ",cmd
+		return True
+		
 				
  
 if __name__ == "__main__":

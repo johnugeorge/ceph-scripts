@@ -6,6 +6,12 @@ CPU_HISTORY=10
 class SystemInfo:
 	def __init__(self,system_name):
 		self.base_folder=BASE_DIRECTORY+system_name
+		self.prev_op_r_sum=0
+		self.prev_op_r_avgcount=0
+		self.prev_op_sum=0
+		self.prev_op_avgcount=0
+		self.prev_op_w_avgcount=0
+		self.prev_op_w_sum=0
 
 	def read(self,file_name):
 		f = open(file_name, 'rU')
@@ -68,6 +74,12 @@ class SystemInfo:
 		result_set=[]
 		value_avgcount=float((self.read(latest_file_avgcount))[1])
 		value_sum=float((self.read(latest_file_sum))[1])
+		temp_avgcount=value_avgcount
+		temp_sum = value_sum
+		value_avgcount= value_avgcount - self.prev_op_avgcount
+		value_sum = value_sum - self.prev_op_sum
+		self.prev_op_sum = temp_sum
+		self.prev_op_avgcount = temp_avgcount 
 		#print "Overall count value",value_avgcount
 		#print "Overall sum value",value_sum
 		if value_avgcount == 0:
@@ -78,18 +90,36 @@ class SystemInfo:
 		#print "Overall latency ",latency
 		value_avgcount=float((self.read(latest_file_r_avgcount))[1])
 		value_sum=float((self.read(latest_file_r_sum))[1])
+		temp_avgcount=value_avgcount
+		temp_sum = value_sum
 		#print "Read count value",value_avgcount
 		#print "Read sum value",value_sum
+		value_avgcount= value_avgcount - self.prev_op_r_avgcount
+		value_sum = value_sum - self.prev_op_r_sum
+		self.prev_op_r_sum = temp_sum
+		self.prev_op_r_avgcount = temp_avgcount 
+
 		if value_avgcount == 0:
 			latency = 0
 		else:
 			latency = value_sum/value_avgcount
 		result_set.append(latency)
+
+
 		#print "Read latency ",latency
 		value_avgcount=float((self.read(latest_file_w_avgcount))[1])
 		value_sum=float((self.read(latest_file_w_sum))[1])
+		temp_avgcount=value_avgcount
+		temp_sum = value_sum
 		#print "Write count value",value_avgcount
 		#print "Write sum value",value_sum
+
+
+
+		value_avgcount= value_avgcount - self.prev_op_w_avgcount
+		value_sum = value_sum - self.prev_op_w_sum
+		self.prev_op_w_sum = temp_sum
+		self.prev_op_w_avgcount = temp_avgcount 
 		if value_avgcount == 0:
 			latency = 0
 		else:
